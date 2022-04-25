@@ -13,6 +13,7 @@ public class DocumentSearch {
   final String PLACEHOLDER_TERMS = "algae";
 
   private Map<String, String> allLinks = new HashMap<>();
+  private Map<String, String> bodyText = new HashMap<>();
   private Map<String, List<String>> outputMap = new HashMap<>();
 
   public DocumentSearch() {
@@ -23,8 +24,14 @@ public class DocumentSearch {
     }
   }
 
+  /*
+  This method will navigate to the base URL and collect all the links in the main body. The links are added to the
+  hash map "allLinks" with the relevant article title. It then navigates to these links and collects all text in the
+  topic-paragraph class and adds them to a map with the article title and the relevant text.
+   */
   public void getAllLinks() {
-    this.allLinks = new HashMap<String, String>();
+    this.allLinks = new HashMap<>();
+    this.bodyText = new HashMap<>();
     Elements main = this.document.select("main");
     Element content = main.select("div.topic-content").first();
     if (content != null) {
@@ -35,10 +42,36 @@ public class DocumentSearch {
         String artiURL = a.attr("abs:href");
         String artiTitle = a.text();
         this.allLinks.put(artiTitle, artiURL);
-        System.out.println(artiTitle + " " + artiURL);
+        //System.out.println(artiTitle + " " + artiURL);
+        String contentText = getBodyText(artiURL);
+        //System.out.println(artiTitle);
+        //System.out.println(contentText);
+        this.bodyText.put(artiTitle, contentText);
       }
-
     }
+  }
+
+  /*
+  This method is a private method used in function "getAllLinks" that navigates to an input URL and retrieves all text
+  in the main body that is considered a topic-paragraph by Jsoup. We use the ignoreContentType command to avoid
+  exceptions encountered when travelling to a .jpeg link.
+
+  NOTE: The string returned CAN be empty.
+   */
+  private String getBodyText(String relURL) {
+    String text = "";
+    try {
+      this.document = Jsoup.connect(relURL).ignoreContentType(true).get();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    Elements main = this.document.select("main");
+    Elements paragraphs = main.select("p.topic-paragraph");
+    for (Element p : paragraphs) {
+      String desc = p.text();
+      text += desc;
+    }
+    return text;
   }
 
   public boolean searchLinks(String term) {
