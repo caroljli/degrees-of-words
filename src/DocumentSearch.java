@@ -17,7 +17,7 @@ public class DocumentSearch {
 
   public DocumentSearch() {
     try {
-      this.document = Jsoup.connect(PLACEHOLDER_URL).get();
+      this.document = Jsoup.connect(PLACEHOLDER_URL).get(); // TODO: change to user input
     } catch (IOException e) {
       e.printStackTrace();
     }
