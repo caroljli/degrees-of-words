@@ -38,7 +38,7 @@ public class DocumentSearch {
     return 0;
   }
 
-  public Map<String, List<String>> getResults() {
+  public Map<String, List<String>> getResults(int orderPreference) {
     return this.outputMap;
   }
 }
