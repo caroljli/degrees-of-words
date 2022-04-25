@@ -16,7 +16,11 @@ public class DocumentSearch {
   private Map<String, List<String>> outputMap = new HashMap<>();
 
   public DocumentSearch() {
-    // TODO
+    try {
+      this.document = Jsoup.connect(PLACEHOLDER_URL).get();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public void getAllLinks() {
