@@ -44,7 +44,6 @@ public class DocumentSearch {
         this.allLinks.put(artiTitle, artiURL);
         //System.out.println(artiTitle + " " + artiURL);
         String contentText = getBodyText(artiURL);
-        //System.out.println(artiTitle);
         //System.out.println(contentText);
         this.bodyText.put(artiTitle, contentText);
       }
