@@ -24,7 +24,21 @@ public class DocumentSearch {
   }
 
   public void getAllLinks() {
-    // TODO
+    this.allLinks = new HashMap<String, String>();
+    Elements main = this.document.select("main");
+    Element content = main.select("div.topic-content").first();
+    if (content != null) {
+      Elements links = content.select("a[href]");
+      for (Element link : links) {
+        Elements aTag = link.select("a");
+        Element a = aTag.get(0);
+        String artiURL = a.attr("abs:href");
+        String artiTitle = a.text();
+        this.allLinks.put(artiTitle, artiURL);
+        System.out.println(artiTitle + " " + artiURL);
+      }
+
+    }
   }
 
   public boolean searchLinks(String term) {
