@@ -8,6 +8,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class DocumentSearch {
+  private Document document;
+  final String PLACEHOLDER = "https://www.britannica.com/animal/jellyfish";
+  
   public DocumentSearch() {
 
   }
