@@ -106,14 +106,22 @@ public class DocumentSearch {
     }
   }
 
+  /**
+   * Creates a HashMap of the cosine similarities of each document from each link of the user input query.
+   */
   public void createCosineSimilarity() {
-    TextDocument query = new TextDocument(PLACEHOLDER_TERMS);
+    TextDocument query = new TextDocument(PLACEHOLDER_TERMS); // TODO: change with actual term input
     for (int i = 1; i < this.textDocuments.size(); i++) {
       TextDocument currDoc = textDocuments.get(i);
       this.cosineSimilarities.put(currDoc, this.getCosineSimilarity(query, currDoc));
     }
   }
 
+  /**
+   * Return the magnitude of a vector.
+   * @param document the document to calculate the magnitude of.
+   * @return the magnitude
+   */
   private double getMagnitude(TextDocument document) {
     double magnitude = 0;
     HashMap<String, Double> weights = this.tfIdfWeights.get(document);
@@ -124,6 +132,12 @@ public class DocumentSearch {
     return Math.sqrt(magnitude);
   }
 
+  /**
+   * This will take two documents and return the dot product.
+   * @param d1 Document 1
+   * @param d2 Document 2
+   * @return the dot product of the documents
+   */
   private double getDotProduct(TextDocument d1, TextDocument d2) {
     double product = 0;
     HashMap<String, Double> weights1 = tfIdfWeights.get(d1);
@@ -136,6 +150,12 @@ public class DocumentSearch {
     return product;
   }
 
+  /**
+   * Returns the cosine similarity (ranging from 0 to 1) of two documents.
+   * @param d1 Document 1
+   * @param d2 Document 2
+   * @return the cosine similarity
+   */
   public double getCosineSimilarity(TextDocument d1, TextDocument d2) {
     return getDotProduct(d1, d2) / (getMagnitude(d1) * getMagnitude(d2));
   }
@@ -143,7 +163,6 @@ public class DocumentSearch {
   public Map<String, List<String>> getResults(int orderPreference) {
     return this.outputMap;
   }
-
 
   //testing
 }
