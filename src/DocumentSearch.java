@@ -16,18 +16,25 @@ public class DocumentSearch {
   private Map<String, String> bodyText = new HashMap<>();
   private Map<String, List<String>> outputMap = new HashMap<>();
 
+  private HashMap<TextDocument, HashMap<String, Double>> tfIdfWeights;
+  private HashMap<TextDocument, Double> cosineSimilarities;
+  private Corpus corpus;
+  private List<TextDocument> textDocuments;
+
   public DocumentSearch() {
     try {
       this.document = Jsoup.connect(PLACEHOLDER_URL).get(); // TODO: change to user input
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    textDocuments = new ArrayList<>();
   }
 
-  /*
-  This method will navigate to the base URL and collect all the links in the main body. The links are added to the
-  hash map "allLinks" with the relevant article title. It then navigates to these links and collects all text in the
-  topic-paragraph class and adds them to a map with the article title and the relevant text.
+  /**
+   * This method will navigate to the base URL and collect all the links in the main body. The links are added to the
+   * HashMap "allLinks" with the relevant article title. It then navigates to these links and collects all text in the
+   * topic-paragraph class and adds them to a map with the article title and the relevant text.
    */
   public void getAllLinks() {
     this.allLinks = new HashMap<>();
@@ -50,12 +57,14 @@ public class DocumentSearch {
     }
   }
 
-  /*
-  This method is a private method used in function "getAllLinks" that navigates to an input URL and retrieves all text
-  in the main body that is considered a topic-paragraph by Jsoup. We use the ignoreContentType command to avoid
-  exceptions encountered when travelling to a .jpeg link.
-
-  NOTE: The string returned CAN be empty.
+  /**
+   * This method is a private method used in function "getAllLinks" that navigates to an input URL and retrieves all
+   * text in the main body that is considered a topic-paragraph by JSoup. We use the ignoreContentType command to avoid
+   * exceptions encountered when travelling to a .jpeg link.
+   *
+   * NOTE: The string returned CAN be empty.
+   * @param relURL URL to navigate to
+   * @return Text in main body that is considered a topic-paragraph
    */
   private String getBodyText(String relURL) {
     String text = "";
@@ -73,19 +82,62 @@ public class DocumentSearch {
     return text;
   }
 
-  public boolean searchLinks(String term) {
-    // TODO
-    return true;
+  /**
+   * Creates the tf-idf vectors per body text of each link and stores as a HashMap of the TextDocument of the body text
+   * of each link and the associated tf-idf weight.
+   */
+  public void createTfIdf() {
+    for (String text : this.bodyText.values()) {
+      this.textDocuments.add(new TextDocument(text));
+    }
+    this.corpus = new Corpus(this.textDocuments);
+
+    Set<String> terms = corpus.getInvertedIndex().keySet();
+    for (TextDocument textDocument : corpus.getDocuments()) {
+      HashMap<String, Double> weights = new HashMap<>();
+
+      for (String term: terms) {
+        double tf = textDocument.getTermFrequency(term);
+        double idf = corpus.getInverseDocumentFrequency(term);
+        double weight = tf * idf;
+        weights.put(term, weight);
+      }
+      this.tfIdfWeights.put(textDocument, weights);
+    }
   }
 
-  public int getTfIdf() {
-    // TODO
-    return 0;
+  public void createCosineSimilarity() {
+    TextDocument query = new TextDocument(PLACEHOLDER_TERMS);
+    for (int i = 1; i < this.textDocuments.size(); i++) {
+      TextDocument currDoc = textDocuments.get(i);
+      this.cosineSimilarities.put(currDoc, this.getCosineSimilarity(query, currDoc));
+    }
   }
 
-  public int getCosineSimilarity() {
-    // TODO
-    return 0;
+  private double getMagnitude(TextDocument document) {
+    double magnitude = 0;
+    HashMap<String, Double> weights = this.tfIdfWeights.get(document);
+    for (double weight : weights.values()) {
+      magnitude += weight * weight;
+    }
+
+    return Math.sqrt(magnitude);
+  }
+
+  private double getDotProduct(TextDocument d1, TextDocument d2) {
+    double product = 0;
+    HashMap<String, Double> weights1 = tfIdfWeights.get(d1);
+    HashMap<String, Double> weights2 = tfIdfWeights.get(d2);
+
+    for (String term : weights1.keySet()) {
+      product += weights1.get(term) * weights2.get(term);
+    }
+
+    return product;
+  }
+
+  public double getCosineSimilarity(TextDocument d1, TextDocument d2) {
+    return getDotProduct(d1, d2) / (getMagnitude(d1) * getMagnitude(d2));
   }
 
   public Map<String, List<String>> getResults(int orderPreference) {
