@@ -10,7 +10,8 @@ import org.jsoup.select.Elements;
 public class DocumentSearch {
   private Document document;
   final String PLACEHOLDER_URL = "https://www.britannica.com/animal/jellyfish";
-  final String PLACEHOLDER_TERMS = "algae";
+  final String PLACEHOLDER_TERMS = "often";
+  final TextDocument query = new TextDocument(PLACEHOLDER_TERMS); // TODO: change with actual term input
 
   private Map<String, String> allLinks = new HashMap<>();
   private Map<String, String> bodyText = new HashMap<>();
@@ -18,7 +19,6 @@ public class DocumentSearch {
 
   private HashMap<TextDocument, HashMap<String, Double>> tfIdfWeights;
   private HashMap<TextDocument, Double> cosineSimilarities;
-  private Corpus corpus;
   private List<TextDocument> textDocuments;
 
   public DocumentSearch() {
@@ -28,6 +28,8 @@ public class DocumentSearch {
       e.printStackTrace();
     }
 
+    tfIdfWeights = new HashMap<>();
+    cosineSimilarities = new HashMap<>();
     textDocuments = new ArrayList<>();
   }
 
@@ -87,10 +89,11 @@ public class DocumentSearch {
    * of each link and the associated tf-idf weight.
    */
   public void createTfIdf() {
+    textDocuments.add(query); // TODO: change with actual term input
     for (String text : this.bodyText.values()) {
       this.textDocuments.add(new TextDocument(text));
     }
-    this.corpus = new Corpus(this.textDocuments);
+    Corpus corpus = new Corpus(this.textDocuments);
 
     Set<String> terms = corpus.getInvertedIndex().keySet();
     for (TextDocument textDocument : corpus.getDocuments()) {
@@ -110,11 +113,24 @@ public class DocumentSearch {
    * Creates a HashMap of the cosine similarities of each document from each link of the user input query.
    */
   public void createCosineSimilarity() {
-    TextDocument query = new TextDocument(PLACEHOLDER_TERMS); // TODO: change with actual term input
-    for (int i = 1; i < this.textDocuments.size(); i++) {
-      TextDocument currDoc = textDocuments.get(i);
-      this.cosineSimilarities.put(currDoc, this.getCosineSimilarity(query, currDoc));
+    for (TextDocument textDocument : this.textDocuments) {
+      try {
+      if (textDocument.toString().length() > 0) this.cosineSimilarities.put(textDocument,
+          this.getCosineSimilarity(query, textDocument));
+      } catch (NullPointerException e) {
+        System.out.println("NullPointerException: invalid query");
+        e.printStackTrace();
+      }
+
     }
+  }
+
+  public HashMap<TextDocument, HashMap<String, Double>> getTfIdfWeights() {
+    return this.tfIdfWeights;
+  }
+
+  public HashMap<TextDocument, Double> getCosineSimilarities() {
+    return this.cosineSimilarities;
   }
 
   /**
@@ -140,8 +156,8 @@ public class DocumentSearch {
    */
   private double getDotProduct(TextDocument d1, TextDocument d2) {
     double product = 0;
-    HashMap<String, Double> weights1 = tfIdfWeights.get(d1);
-    HashMap<String, Double> weights2 = tfIdfWeights.get(d2);
+    HashMap<String, Double> weights1 = this.tfIdfWeights.get(d1);
+    HashMap<String, Double> weights2 = this.tfIdfWeights.get(d2);
 
     for (String term : weights1.keySet()) {
       product += weights1.get(term) * weights2.get(term);
