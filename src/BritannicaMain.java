@@ -15,6 +15,7 @@ public class BritannicaMain {
         documentSearch.getAllLinks();
         documentSearch.createTfIdf();
         documentSearch.createCosineSimilarity();
+        documentSearch.createOutputMap(query);
 
         System.out.println(documentSearch.getTfIdfWeights());
         System.out.println(documentSearch.getCosineSimilarities());
