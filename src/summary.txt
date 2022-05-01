@@ -10,9 +10,14 @@ search for the second term, recording its term frequencies as well as the cosine
 each linked document. We also wanted to find the lengths of the linked documents because this measure would provide
 insight on how useful or relevant the tf and cosine similarity measures are. The user can then choose to sort linked
 documents based on tf, cosine similarity, or document length and the program will output a list of linked articles
-ordered from highest to lowest score ranking. This program will ideally be helpful for particularly students that don't have time to comb through all hyperlinks on a webpage for a
-relevant topic.
+ordered from highest to lowest score ranking. This program will ideally be helpful for particularly students that don't
+have time to comb through all hyperlinks on a webpage for a relevant topic.
 
+Assumptions:
+    - No document has the same exact term frequency (# of occurences/total length) for the given query
+    - No document has the same exact word count
+    - No document has the same exact cosine similarity to the query text
+    - User inputs relevant article page url from Britannica (content pages, not authors pages/contact information)
 
 Project Concepts:
     1. Document Search: We search and scrape for text information on the Britannica website using JSoup

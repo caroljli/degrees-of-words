@@ -16,12 +16,13 @@ public class DocumentSearch {
 
   private Map<String, String> allLinks = new HashMap<>();
   private Map<String, String> bodyText = new HashMap<>();
+  private Map<String, String> biContentMap = new HashMap<>();
   private Map<String, List<String>> outputMap = new HashMap<>();
 
   private final HashMap<TextDocument, HashMap<String, Double>> tfIdfWeights;
-  private final HashMap<TextDocument, Double> cosineSimilarities;
-  private final HashMap<TextDocument, Double> tfs;
-  private final HashMap<TextDocument, Integer> documentLengths;
+  private final HashMap<Double, TextDocument> cosineSimilarities;
+  private final HashMap<Double, TextDocument> tfs;
+  private final HashMap<Integer, TextDocument> documentLengths;
   private final List<TextDocument> textDocuments;
 
   public DocumentSearch(String url, String queryText) {
@@ -121,8 +122,8 @@ public class DocumentSearch {
   public void createCosineSimilarity() {
     for (TextDocument textDocument : this.textDocuments) {
       try {
-      if (textDocument.toString().length() > 0) this.cosineSimilarities.put(textDocument,
-          this.getCosineSimilarity(query, textDocument));
+      if (textDocument.toString().length() > 0) this.cosineSimilarities.put(this.getCosineSimilarity(query, textDocument),
+              textDocument);
       } catch (NullPointerException e) {
         System.out.println("NullPointerException: invalid query");
         e.printStackTrace();
@@ -135,7 +136,7 @@ public class DocumentSearch {
     return this.tfIdfWeights;
   }
 
-  public HashMap<TextDocument, Double> getCosineSimilarities() {
+  public HashMap<Double, TextDocument> getCosineSimilarities() {
     return this.cosineSimilarities;
   }
 
@@ -147,10 +148,11 @@ public class DocumentSearch {
   private double getMagnitude(TextDocument document) {
     double magnitude = 0;
     HashMap<String, Double> weights = this.tfIdfWeights.get(document);
-    for (double weight : weights.values()) {
-      magnitude += weight * weight;
+    if (weights != null) {
+      for (double weight : weights.values()) {
+        magnitude += weight * weight;
+      }
     }
-
     return Math.sqrt(magnitude);
   }
 
@@ -162,13 +164,15 @@ public class DocumentSearch {
    */
   private double getDotProduct(TextDocument d1, TextDocument d2) {
     double product = 0;
-    System.out.println(d1);
-    System.out.println(d2);
+    //System.out.println(d1);
+    //System.out.println(d2);
     HashMap<String, Double> weights1 = this.tfIdfWeights.get(d1);
     HashMap<String, Double> weights2 = this.tfIdfWeights.get(d2);
 
     for (String term : weights1.keySet()) {
-      product += weights1.get(term) * weights2.get(term);
+      if (weights1 != null && weights2 != null) {
+        product += weights1.get(term) * weights2.get(term);
+      }
     }
 
     return product;
@@ -191,8 +195,11 @@ public class DocumentSearch {
   public void createTfMap(String secondTerm) {
     for (TextDocument textDocument : this.textDocuments) {
       try {
-        if (textDocument.toString().length() > 0) this.tfs.put(textDocument,
-                textDocument.getTermFrequency(secondTerm));
+        if (textDocument.toString().length() > 0) {
+          if (!this.tfs.containsKey(textDocument.getTermFrequency(secondTerm))) {
+              this.tfs.put(textDocument.getTermFrequency(secondTerm)/textDocument.getDocumentWordCount(), textDocument);
+          }
+        }
       } catch (NullPointerException e) {
         System.out.println("NullPointerException: invalid query");
         e.printStackTrace();
@@ -200,11 +207,17 @@ public class DocumentSearch {
     }
   }
 
+  /**
+   * Assumes that no two documents have the same number of words
+   */
   public void createDocumentLengthMap() {
     for (TextDocument textDocument : this.textDocuments) {
       try {
-        if (textDocument.toString().length() > 0) this.documentLengths.put(textDocument,
-                textDocument.getDocumentWordCount());
+        if (textDocument.toString().length() > 0) {
+          if (!this.documentLengths.containsKey(textDocument.getDocumentWordCount())) {
+            this.documentLengths.put(textDocument.getDocumentWordCount(), textDocument);
+          }
+        }
       } catch (NullPointerException e) {
         System.out.println("NullPointerException: invalid query");
         e.printStackTrace();
@@ -222,6 +235,7 @@ public class DocumentSearch {
     for (String title : this.bodyText.keySet()) {
       List<String> results = new LinkedList();
       TextDocument currDoc = new TextDocument(this.bodyText.get(title));
+      this.biContentMap.put(currDoc.toString(), title);
       double tf = currDoc.getTermFrequency(secondTerm);
       double cosineSimilarity = getCosineSimilarity(query, currDoc);
       int docLength = getDocumentLength(currDoc);
@@ -229,7 +243,7 @@ public class DocumentSearch {
       results.add("cosine similarity: " + cosineSimilarity);
       results.add("word count: " + docLength);
       outputMap.put(title, results);
-      System.out.println(title + " " + tf + " " + cosineSimilarity + " " + docLength);
+      //System.out.println(title + " " + tf + " " + cosineSimilarity + " " + docLength);
     }
     return this.outputMap;
   }
@@ -238,22 +252,55 @@ public class DocumentSearch {
    *
    */
   public void getResults(int orderPreferences) {
+    int count = 1;
+    createDocumentLengthMap();
+    createTfMap(query.toString());
     if (orderPreferences == 1) {
-
-      Stream<Map.Entry<TextDocument, Double>> sorted = this.tfs.entrySet().stream().sorted(Map.Entry.comparingByValue());
-//      Map<Integer, String> sortedMap =
-//              this.tfs.entrySet().stream()
-//                      .sorted(Map.Entry.comparingByValue())
-//                      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-//                              (e1, e2) -> e1, LinkedHashMap::new));
+      List<Double> tfList = new ArrayList<>(this.tfs.keySet());
+      Collections.sort(tfList, Collections.reverseOrder());
+      for (Double p : tfList) {
+        TextDocument doc = this.tfs.get(p);
+        //System.out.println(doc);
+        String artiTitle = this.biContentMap.get(doc.toString());
+        if (artiTitle != null) {
+          String relURL = this.allLinks.get(artiTitle);
+          System.out.println(count + " " + artiTitle);
+          System.out.println("Term Frequency: " + p);
+          System.out.println("Article Link:" + relURL);
+          count++;
+        }
+      }
 
     } else if (orderPreferences == 2) {
+      List<Double> cosList = new ArrayList<>(this.cosineSimilarities.keySet());
+      Collections.sort(cosList, Collections.reverseOrder());
+      for (Double p : cosList) {
+        TextDocument doc = this.cosineSimilarities.get(p);
+        String artiTitle = this.biContentMap.get(doc.toString());
+        if (artiTitle != null) {
+          String relURL = this.allLinks.get(artiTitle);
+          System.out.println(count + " " + artiTitle);
+          System.out.println("Cosine Similarity to Query: " + p);
+          System.out.println("Article Link:" + relURL);
+          count++;
+        }
+      }
 
     } else if (orderPreferences == 3) {
-
+      List<Integer> lenList = new ArrayList<>(this.documentLengths.keySet());
+      Collections.sort(lenList, Collections.reverseOrder());
+      for (Integer p : lenList) {
+        TextDocument doc = this.documentLengths.get(p);
+        String artiTitle = this.biContentMap.get(doc.toString());
+        if (artiTitle != null) {
+          String relURL = this.allLinks.get(artiTitle);
+          System.out.println(count + " " + artiTitle);
+          System.out.println("Document Length: " + p);
+          System.out.println("Article Link:" + relURL);
+          count++;
+        }
+      }
     }
-    Map<String, List<String>> orderedOutputMap = new HashMap<>();
-    return this.outputMap;
   }
 
 }
