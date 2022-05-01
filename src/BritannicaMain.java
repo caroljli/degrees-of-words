@@ -10,6 +10,10 @@ public class BritannicaMain {
         System.out.println("Please input the query text.");
         String query = scanner.nextLine();
 
+        System.out.println("Please input an integer between 1-3 to rank links by:");
+        System.out.println("1 - Term frequency, 2 - Cosine Similarity, 3 - Document length");
+        String statQuery = scanner.nextLine();
+
         DocumentSearch documentSearch = new DocumentSearch(brittanicaUrl, query);
 
         documentSearch.getAllLinks();

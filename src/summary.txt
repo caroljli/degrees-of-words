@@ -3,24 +3,25 @@ Group Members: Carol Li, Caroline Ma, Sophia Mark
 
 Project Type: Implementation
 Project Description: Often when someone is doing research online, it can be difficult to know what page to navigate
-to next for the best results of a relevant term. We wanted to create a resource for this challenge. Our program takes in two words from
-user input and finds their similarity by navigating through the links on their Britannica pages. The first word is
-used for the base url and treated as the main document. We iterate through all the links on the main document to
+to next for the best results of a relevant term. We wanted to create a resource for this challenge. Our program takes in two strings from
+user input and finds their similarity by navigating through the links on their Britannica pages. The first string is the
+ base URL, or main webpage our user was researching on. We iterate through all the links on the main document to
 search for the second term, recording its term frequencies as well as the cosine similarities of main document with
-each linked document. The user can then choose to sort linked documents based on tf, cosine similarity, or document length
-and the program will output a list of linked articles ordered from highest to lowest score ranking.
+each linked document. We also wanted to find the lengths of the linked documents because this measure would provide
+insight on how useful or relevant the tf and cosine similarity measures are. The user can then choose to sort linked
+documents based on tf, cosine similarity, or document length and the program will output a list of linked articles
+ordered from highest to lowest score ranking. This program will ideally be helpful for particularly students that don't have time to comb through all hyperlinks on a webpage for a
+relevant topic.
 
-We also wanted to find the lengths of the linked documents because this measure would provide insight on how useful or
-relevant the tf and cosine similarity measures are.
 
 Project Concepts:
-    1. Document Search: We search and retrieve text information on the Britannica website using JSoup
+    1. Document Search: We search and scrape for text information on the Britannica website using JSoup
     2. Vector Space Model: Given two terms, we find their similarity statistics (tf, idf, cosine similarity) by using
     the text on their Britannica pages as topic-paragraphs
 
 Work Breakdown:
     - Retrieve links, for each link store body text as String: Sophia
     - Calculate tf, idf, cosine similarity scores: Carol
-    - User input with Scanner: Carol
+    - User input with Scanner: Carol + Sophia
     - Creating output map: Caroline
     - Writeup: Caroline
