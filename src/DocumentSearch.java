@@ -9,6 +9,8 @@ import org.jsoup.select.Elements;
 
 public class DocumentSearch {
   private Document document;
+  private String url;
+  private String queryText;
   final String PLACEHOLDER_URL = "https://www.britannica.com/animal/jellyfish";
   final String PLACEHOLDER_TERMS = "often";
   final TextDocument query = new TextDocument(PLACEHOLDER_TERMS); // TODO: change with actual term input
@@ -21,9 +23,11 @@ public class DocumentSearch {
   private HashMap<TextDocument, Double> cosineSimilarities;
   private List<TextDocument> textDocuments;
 
-  public DocumentSearch() {
+  public DocumentSearch(String url, String queryText) {
+    this.url = url;
+    this.queryText = queryText;
     try {
-      this.document = Jsoup.connect(PLACEHOLDER_URL).get(); // TODO: change to user input
+      this.document = Jsoup.connect(this.url).get();
     } catch (IOException e) {
       e.printStackTrace();
     }

@@ -1,16 +1,16 @@
 import java.util.Scanner;
 
 public class BritannicaMain {
-
     public static void main (String[] args) {
-        DocumentSearch documentSearch = new DocumentSearch();
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Please input the Brittanica page that you want to search.");
-        String brittanicaInput = scanner.nextLine();
+        System.out.println("Please input the Brittanica page link that you want to search.");
+        String brittanicaUrl = scanner.nextLine();
 
         System.out.println("Please intput the query text.");
         String query = scanner.nextLine();
+
+        DocumentSearch documentSearch = new DocumentSearch(brittanicaUrl, query);
 
         documentSearch.getAllLinks();
         documentSearch.createTfIdf();
