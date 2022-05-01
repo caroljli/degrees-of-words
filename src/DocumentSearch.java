@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -236,7 +237,21 @@ public class DocumentSearch {
   /**
    *
    */
-  public Map<String, List<String>> getResults(int orderPreferences) {
+  public void getResults(int orderPreferences) {
+    if (orderPreferences == 1) {
+
+      Stream<Map.Entry<TextDocument, Double>> sorted = this.tfs.entrySet().stream().sorted(Map.Entry.comparingByValue());
+//      Map<Integer, String> sortedMap =
+//              this.tfs.entrySet().stream()
+//                      .sorted(Map.Entry.comparingByValue())
+//                      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+//                              (e1, e2) -> e1, LinkedHashMap::new));
+
+    } else if (orderPreferences == 2) {
+
+    } else if (orderPreferences == 3) {
+
+    }
     Map<String, List<String>> orderedOutputMap = new HashMap<>();
     return this.outputMap;
   }
