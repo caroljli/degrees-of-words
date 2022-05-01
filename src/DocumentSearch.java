@@ -9,25 +9,22 @@ import org.jsoup.select.Elements;
 
 public class DocumentSearch {
   private Document document;
-  private String url;
-  private String queryText;
-  final String PLACEHOLDER_URL = "https://www.britannica.com/animal/jellyfish";
-  final String PLACEHOLDER_TERMS = "often";
-  final TextDocument query = new TextDocument(PLACEHOLDER_TERMS); // TODO: change with actual term input
+  //  final String PLACEHOLDER_URL = "https://www.britannica.com/animal/jellyfish";
+//  final String PLACEHOLDER_TERMS = "often";
+  private final TextDocument query;
 
   private Map<String, String> allLinks = new HashMap<>();
   private Map<String, String> bodyText = new HashMap<>();
   private Map<String, List<String>> outputMap = new HashMap<>();
 
-  private HashMap<TextDocument, HashMap<String, Double>> tfIdfWeights;
-  private HashMap<TextDocument, Double> cosineSimilarities;
-  private List<TextDocument> textDocuments;
+  private final HashMap<TextDocument, HashMap<String, Double>> tfIdfWeights;
+  private final HashMap<TextDocument, Double> cosineSimilarities;
+  private final List<TextDocument> textDocuments;
 
   public DocumentSearch(String url, String queryText) {
-    this.url = url;
-    this.queryText = queryText;
+    this.query = new TextDocument(queryText);
     try {
-      this.document = Jsoup.connect(this.url).get();
+      this.document = Jsoup.connect(url).get();
     } catch (IOException e) {
       e.printStackTrace();
     }
