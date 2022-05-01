@@ -18,6 +18,9 @@ public class Corpus {
     this.createInvertedIndex();
   }
 
+  /**
+   * Creates the inverted index.
+   */
   private void createInvertedIndex() {
     for (TextDocument textDocument : this.textDocuments) {
       Set<String> terms = textDocument.getTermList();
@@ -35,6 +38,11 @@ public class Corpus {
     }
   }
 
+  /**
+   * Processes the idf for a given term.
+   * @param term a term in a document
+   * @return the idf for the term
+   */
   public double getInverseDocumentFrequency(String term) {
     if (invertedIndex.containsKey(term)) {
       double size = this.textDocuments.size();

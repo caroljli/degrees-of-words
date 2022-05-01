@@ -27,6 +27,10 @@ public class TextDocument implements Comparable<TextDocument> {
     this.processTermFrequencies();
   }
 
+  /**
+   * Processes all frequencies for each term contained in the file by converting to lower case, removing non-letters,
+   * and updating the frequency in the private term-frequency map.
+   */
   private void processTermFrequencies() {
     String[] terms = this.inputText.split(" ");
 
@@ -44,22 +48,41 @@ public class TextDocument implements Comparable<TextDocument> {
 
   }
 
+  /**
+   * Returns the term frequency for a given word. Term frequency for non-document words is 0.
+   * @param word query term
+   * @return the term frequency for the word in the document
+   */
   public double getTermFrequency(String word) {
     return this.termFrequency.getOrDefault(word, 0);
   }
 
+  /**
+   * @return the input document to process for term frequency, represented as a String.
+   */
   public String getInputText() {
     return this.inputText;
   }
 
+  /**
+   * @return the list of terms for the input text
+   */
   public Set<String> getTermList() {
     return this.termFrequency.keySet();
   }
 
+  /**
+   * The overridden method from Comparable interface, used when one inputText document is compared to another.
+   * @param other the inputText to compare this inputText to.
+   * @return the Comparable output of String comparison, represented as an integer
+   */
   public int compareTo(TextDocument other) {
-    return inputText.compareTo(other.getInputText());
+    return this.inputText.compareTo(other.getInputText());
   }
 
+  /**
+   * @return the input document to process for term frequency, represented as a String.
+   */
   public String toString() {
     return this.inputText;
   }
