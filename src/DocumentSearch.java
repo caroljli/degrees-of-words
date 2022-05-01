@@ -19,6 +19,8 @@ public class DocumentSearch {
 
   private final HashMap<TextDocument, HashMap<String, Double>> tfIdfWeights;
   private final HashMap<TextDocument, Double> cosineSimilarities;
+  private final HashMap<TextDocument, Double> tfs;
+  private final HashMap<TextDocument, Integer> documentLengths;
   private final List<TextDocument> textDocuments;
 
   public DocumentSearch(String url, String queryText) {
@@ -31,6 +33,8 @@ public class DocumentSearch {
 
     tfIdfWeights = new HashMap<>();
     cosineSimilarities = new HashMap<>();
+    tfs = new HashMap<>();
+    documentLengths = new HashMap<>();
     textDocuments = new ArrayList<>();
   }
 
@@ -181,6 +185,30 @@ public class DocumentSearch {
 
   public int getDocumentLength(TextDocument d2) {
     return d2.getDocumentWordCount();
+  }
+
+  public void createTfMap(String secondTerm) {
+    for (TextDocument textDocument : this.textDocuments) {
+      try {
+        if (textDocument.toString().length() > 0) this.tfs.put(textDocument,
+                textDocument.getTermFrequency(secondTerm));
+      } catch (NullPointerException e) {
+        System.out.println("NullPointerException: invalid query");
+        e.printStackTrace();
+      }
+    }
+  }
+
+  public void createDocumentLengthMap() {
+    for (TextDocument textDocument : this.textDocuments) {
+      try {
+        if (textDocument.toString().length() > 0) this.documentLengths.put(textDocument,
+                textDocument.getDocumentWordCount());
+      } catch (NullPointerException e) {
+        System.out.println("NullPointerException: invalid query");
+        e.printStackTrace();
+      }
+    }
   }
 
   /**
