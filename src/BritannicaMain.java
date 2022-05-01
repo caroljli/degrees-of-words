@@ -7,7 +7,7 @@ public class BritannicaMain {
         System.out.println("Please input the Brittanica page link that you want to search.");
         String brittanicaUrl = scanner.nextLine();
 
-        System.out.println("Please intput the query text.");
+        System.out.println("Please input the query text.");
         String query = scanner.nextLine();
 
         DocumentSearch documentSearch = new DocumentSearch(brittanicaUrl, query);
@@ -16,7 +16,7 @@ public class BritannicaMain {
         documentSearch.createTfIdf();
         documentSearch.createCosineSimilarity();
 
-//        System.out.println(test.getTfIdfWeights());
-//        System.out.println(test.getCosineSimilarities());
+        System.out.println(documentSearch.getTfIdfWeights());
+        System.out.println(documentSearch.getCosineSimilarities());
     }
 }
