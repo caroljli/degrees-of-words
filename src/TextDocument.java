@@ -58,6 +58,15 @@ public class TextDocument implements Comparable<TextDocument> {
   }
 
   /**
+   * Returns the number of words in each document
+   * @return integer number of words
+   */
+  public int getDocumentWordCount() {
+    String[] words = this.inputText.split(" ");
+    return words.length;
+  }
+
+  /**
    * @return the input document to process for term frequency, represented as a String.
    */
   public String getInputText() {

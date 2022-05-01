@@ -157,6 +157,8 @@ public class DocumentSearch {
    */
   private double getDotProduct(TextDocument d1, TextDocument d2) {
     double product = 0;
+    System.out.println(d1);
+    System.out.println(d2);
     HashMap<String, Double> weights1 = this.tfIdfWeights.get(d1);
     HashMap<String, Double> weights2 = this.tfIdfWeights.get(d2);
 
@@ -177,6 +179,10 @@ public class DocumentSearch {
     return getDotProduct(d1, d2) / (getMagnitude(d1) * getMagnitude(d2));
   }
 
+  public int getDocumentLength(TextDocument d2) {
+    return d2.getDocumentWordCount();
+  }
+
   /**
    * Returns a HashMap containing statistics of each link in a main doc
    * @param secondTerm second term to be searched in each link
@@ -189,9 +195,12 @@ public class DocumentSearch {
       TextDocument currDoc = new TextDocument(this.bodyText.get(title));
       double tf = currDoc.getTermFrequency(secondTerm);
       double cosineSimilarity = getCosineSimilarity(query, currDoc);
+      int docLength = getDocumentLength(currDoc);
       results.add("tf: " + tf);
       results.add("cosine similarity: " + cosineSimilarity);
+      results.add("word count: " + docLength);
       outputMap.put(title, results);
+      System.out.println(title + " " + tf + " " + cosineSimilarity + " " + docLength);
     }
     return this.outputMap;
   }

@@ -3,12 +3,12 @@ Group Members: Carol Li, Caroline Ma, Sophia Mark
 
 Project Type: Implementation
 Project Description: Often when someone is doing research online, it can be difficult to know what page to navigate
-to next for the best results. We wanted to create a resource for this challenge. Our program takes in two words from
+to next for the best results of a relevant term. We wanted to create a resource for this challenge. Our program takes in two words from
 user input and finds their similarity by navigating through the links on their Britannica pages. The first word is
 used for the base url and treated as the main document. We iterate through all the links on the main document to
 search for the second term, recording its term frequencies as well as the cosine similarities of main document with
-each linked document. The user can then choose to sort linked documents based on tf or cosine similarity, and the
-program will output a list of linked articles ordered from highest to lowest relevance.
+each linked document. The user can then choose to sort linked documents based on tf, cosine similarity, or document length
+and the program will output a list of linked articles ordered from highest to lowest score ranking.
 
 We also wanted to find the lengths of the linked documents because this measure would provide insight on how useful or
 relevant the tf and cosine similarity measures are.
