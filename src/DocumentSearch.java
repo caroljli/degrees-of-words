@@ -176,9 +176,31 @@ public class DocumentSearch {
     return getDotProduct(d1, d2) / (getMagnitude(d1) * getMagnitude(d2));
   }
 
-  public Map<String, List<String>> getResults(int orderPreference) {
+  /**
+   * Returns a HashMap containing statistics of each link in a main doc
+   * @param secondTerm second term to be searched in each link
+   * @return the output hashmap
+   */
+  public Map<String, List<String>> createOutputMap(String secondTerm) {
+    this.outputMap = new HashMap<>();
+    for (String title : this.bodyText.keySet()) {
+      List<String> results = new LinkedList();
+      TextDocument currDoc = new TextDocument(this.bodyText.get(title));
+      double tf = currDoc.getTermFrequency(secondTerm);
+      double cosineSimilarity = getCosineSimilarity(query, currDoc);
+      results.add("tf: " + tf);
+      results.add("cosine similarity: " + cosineSimilarity);
+      outputMap.put(title, results);
+    }
     return this.outputMap;
   }
 
-  //testing
+  /**
+   *
+   */
+  public Map<String, List<String>> getResults(int orderPreferences) {
+    Map<String, List<String>> orderedOutputMap = new HashMap<>();
+    return this.outputMap;
+  }
+
 }
